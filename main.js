@@ -23,15 +23,16 @@ const renderer =  new Renderer(canvas);
 await renderer.initialize();
 
 const gltfLoader = new GLTFLoader();
-await gltfLoader.load('common/scene/scene.gltf')
+await gltfLoader.load('common/scene/neki4.gltf')
 
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
 
 camera.addComponent(new TurntableController(camera, document.body, {
-    distance: 20,
-    pitch: -0.3,
+    distance: 90,
+    pitch: -0.4,
+    yaw: 0.4,
 }));
 
 cube.addComponent(new CubeController(cube, document.body, {
