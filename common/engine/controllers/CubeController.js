@@ -6,7 +6,7 @@ export class CubeController {
         pitch = 0,
         yaw = 0,
         roll = 0,
-        downToTheEarth = 0.5,
+        downToTheEarth = 2.2,
         rollMovement = 0,
         pitchMovement = 0,
         facing = 0,
@@ -47,78 +47,78 @@ export class CubeController {
             if (this.facing == 0) {
                 if (this.keys['KeyW']) {
                     quat.rotateX(rotation, rotation, -hr);
-                    this.pitchMovement -= 0.75;
+                    this.pitchMovement -= 3;
                     this.facing = 2;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
                 if (this.keys['KeyS']) {
                     quat.rotateX(rotation, rotation, hr);
-                    this.pitchMovement += 0.75;
+                    this.pitchMovement += 3;
                     this.facing = 2;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
             
                 }
                 if (this.keys['KeyD']) {
                     quat.rotateZ(rotation, rotation, hr);
-                    this.rollMovement += 0.75;
+                    this.rollMovement += 3;
                     this.facing = 1;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
                 if (this.keys['KeyA']) {
                     quat.rotateZ(rotation, rotation, -hr);
-                    this.rollMovement -= 0.75;
+                    this.rollMovement -= 3;
                     this.facing = 1;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
             } else if (this.facing === 1) {
                 if (this.keys['KeyW']) {
                     quat.rotateX(rotation, rotation, -hr);
-                    this.pitchMovement -= 0.5;
+                    this.pitchMovement -= 2;
                     this.facing = 1;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
                 if (this.keys['KeyS']) {
                     quat.rotateX(rotation, rotation, hr);
-                    this.pitchMovement += 0.5;
+                    this.pitchMovement += 2;
                     this.facing = 1;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
                 if (this.keys['KeyD']) {
                     quat.rotateZ(rotation, rotation, hr);
-                    this.rollMovement += 0.75;
+                    this.rollMovement += 3;
                     this.facing = 0;
-                    this.downToTheEarth = 0.5;
+                    this.downToTheEarth = 2.2;
                 }
                 if (this.keys['KeyA']) {
                     quat.rotateZ(rotation, rotation, -hr);
-                    this.rollMovement -= 0.75;
+                    this.rollMovement -= 3;
                     this.facing = 0;
-                    this.downToTheEarth = 0.5;
+                    this.downToTheEarth = 2.2;
                 }
             } else if (this.facing === 2) {
                 if (this.keys['KeyW']) {
                     quat.rotateX(rotation, rotation, -hr);
-                    this.pitchMovement -= 0.75;
+                    this.pitchMovement -= 3;
                     this.facing = 0;
-                    this.downToTheEarth = 0.5;
+                    this.downToTheEarth = 2.2;
                 }
                 if (this.keys['KeyS']) {
                     quat.rotateX(rotation, rotation, hr);
-                    this.pitchMovement += 0.75;
+                    this.pitchMovement += 3;
                     this.facing = 0;
-                    this.downToTheEarth = 0.5;
+                    this.downToTheEarth = 2.2;
                 }
                 if (this.keys['KeyD']) {
                     quat.rotateZ(rotation, rotation, hr);
-                    this.rollMovement += 0.5;
+                    this.rollMovement += 2;
                     this.facing = 2;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
                 if (this.keys['KeyA']) {
                     quat.rotateZ(rotation, rotation, -hr);
-                    this.rollMovement -= 0.5;
+                    this.rollMovement -= 2;
                     this.facing = 2;
-                    this.downToTheEarth = 0.25;
+                    this.downToTheEarth = 1.2;
                 }
             }
             
