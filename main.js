@@ -8,6 +8,7 @@ import { LinearAnimator } from './common/engine/animators/LinearAnimator.js';
 
 import { TurntableController } from './common/engine/controllers/TurntableController.js';
 import { CubeController } from './common/engine/controllers/CubeController.js';
+import { vec3 } from './lib/gl-matrix-module.js';
 
 import { Camera,
          Model,    
@@ -28,6 +29,7 @@ await gltfLoader.load('common/scene/neki4.gltf')
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
+const cubeTransform = cube.getComponentOfType(Transform);
 
 camera.addComponent(new TurntableController(camera, document.body, {
     distance: 90,
@@ -46,25 +48,81 @@ light.addComponent(new Light({
     ambient: 0.8,
 
 }));
-//light.addComponent(new LinearAnimator(light, {
-//    startPosition: [3,3,3],
-//    endPosition: [-3,3,-3],
-//    duration: 1,
-//    loop: true,
-//}))
+
 scene.addChild(light)
 
+const floorPath = [
+    [0, -1],
+    [10, -1],
+    [10,-7],
+    [22,-7],
+    [22,-3],
+    [26,-3],
+    [26,-1],
+    [30,-1],
+    [30,5],
+    [24,5],
+    [24,3],
+    [22,3],
+    [22,-1],
+    [16,-1],
+    [16,-5],
+    [12,-5],
+    [12,1],
+    [14,1],
+    [14,11],
+    [18,11],
+    [18,9],
+    [22,9],
+    [22,15],
+    [20,15],
+    [20,17],
+    [14,17],
+    [14,15],
+    [12,15],
+    [12,5],
+    [8,5],
+    [8, 1],
+    [0, 1],
+    [0, -1]
+];
+
+function isCubeOutsidePath(point, polygon) {
+    let isOutside = true;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0];
+        const yi = polygon[i][1];
+        const xj = polygon[j][0];
+        const yj = polygon[j][1];
+
+        const intersect = ((yi > point[2]) !== (yj > point[2])) &&
+            (point[0] < (xj - xi) * (point[2] - yi) / (yj - yi) + xi);
+
+        if (intersect) {
+            isOutside = !isOutside;
+        }
+    }
+
+    return isOutside;
+}
+
 function update(t, dt) {
+
     const time = t % 1;
     //falling off 
-    //    const cubePosition = cube.getComponentOfType(Transform).translation;
-//    if (cubePosition[0] >= 3  ||
-//        cubePosition[0] <= -3 ||
-//        cubePosition[2] >= 3  ||
-//        cubePosition[2] <= -3   ) {
-//            console.log(cubePosition);
-//            vec3.lerp(cubePosition, startPosition, endPosition, EasingFunctions.bounceEaseOut(time));
-//        }
+    let cubePosition = cube.getComponentOfType(Transform).translation;
+    if (isCubeOutsidePath(cubePosition, floorPath)) {
+        cube.addComponent(new LinearAnimator(cube, {
+            startPosition: cubePosition,
+            endPosition: [cubePosition[0], -10, cubePosition[2]],
+            duration: time * 10,
+            loop: false,
+        }));
+
+        // Reset cube position
+        cubeTransform.translation = [0, 0.25, 0];
+    }
     scene.traverse(node => {
         for (const component of node.components) {
             component.update?.(time, dt);
