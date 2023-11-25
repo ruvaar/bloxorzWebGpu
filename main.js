@@ -23,7 +23,7 @@ const renderer =  new Renderer(canvas);
 await renderer.initialize();
 
 const gltfLoader = new GLTFLoader();
-await gltfLoader.load('common/scene/neki3.gltf')
+await gltfLoader.load('common/scene/neki4.gltf')
 
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));

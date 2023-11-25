@@ -128,7 +128,7 @@ export class CubeController {
             // Reset the flag to prevent multiple updates for the same key press
             this.isKeyPressed = false;
         }
-
+        
         transform.translation[1] = this.downToTheEarth;
         transform.translation[0] = this.rollMovement;
         transform.translation[2] = this.pitchMovement;
