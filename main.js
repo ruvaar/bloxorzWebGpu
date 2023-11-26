@@ -19,6 +19,7 @@ import { Camera,
 import { Renderer } from './Renderer.js';
 import { Light } from './Light.js';
 
+
 const canvas = document.querySelector('canvas');
 const renderer =  new Renderer(canvas);
 await renderer.initialize();
@@ -136,16 +137,26 @@ function isInside(point, path, facing) {
     return false;
 }
 
+let gameWon = false;
 function winGame() {
-    const overlay = document.createElement('div');
-    overlay.classList.add('winOverlay');
-    const message = document.createElement('div');
-    message.textContent = 'YOU WIN!';
-    
-    overlay.appendChild(message);
+    if (!gameWon) { 
+        const elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
+        const overlay = document.createElement('div');
+        overlay.classList.add('winOverlay');
+        const message = document.createElement('div');
+        message.textContent = `YOU WIN! Time: ${elapsedTime} seconds`;
 
-    document.body.appendChild(overlay);
+        overlay.appendChild(message);
+
+        document.body.appendChild(overlay);
+
+        gameWon = true;
+    }
 }
+
+
+let gameStartTime = Date.now(); 
+
 
 
 function update(t, dt) {
