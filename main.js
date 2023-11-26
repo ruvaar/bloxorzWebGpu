@@ -8,6 +8,7 @@ import { LinearAnimator } from './common/engine/animators/LinearAnimator.js';
 
 import { TurntableController } from './common/engine/controllers/TurntableController.js';
 import { CubeController } from './common/engine/controllers/CubeController.js';
+import { vec3 } from './lib/gl-matrix-module.js';
 
 import { Camera,
          Model,    
@@ -28,6 +29,7 @@ await gltfLoader.load('common/scene/neki4.gltf')
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
+const cubeTransform = cube.getComponentOfType(Transform);
 
 camera.addComponent(new TurntableController(camera, document.body, {
     distance: 90,
@@ -35,8 +37,8 @@ camera.addComponent(new TurntableController(camera, document.body, {
     yaw: 0.4,
 }));
 
-cube.addComponent(new CubeController(cube, document.body, {
-}));
+const cubeController = new CubeController(cube, document.body, {});
+cube.addComponent(cubeController);
 
 
 
@@ -46,25 +48,94 @@ light.addComponent(new Light({
     ambient: 0.8,
 
 }));
-//light.addComponent(new LinearAnimator(light, {
-//    startPosition: [3,3,3],
-//    endPosition: [-3,3,-3],
-//    duration: 1,
-//    loop: true,
-//}))
+
 scene.addChild(light)
 
+const floorPath = [
+    [0, -1],
+    [10, -1],
+    [10,-7],
+    [22,-7],
+    [22,-3],
+    [26,-3],
+    [26,-1],
+    [30,-1],
+    [30,5],
+    [24,5],
+    [24,3],
+    [22,3],
+    [22,-1],
+    [16,-1],
+    [16,-5],
+    [12,-5],
+    [12,1],
+    [14,1],
+    [14,11],
+    [18,11],
+    [18,9],
+    [22,9],
+    [22,15],
+    [20,15],
+    [20,17],
+    [14,17],
+    [14,15],
+    [12,15],
+    [12,5],
+    [8,5],
+    [8, 1],
+    [0, 1],
+    [0, -1]
+]; 
+
+const FinishPoint = [27,2]
+
+function isInside(point, path) {
+    const x = point[0];
+    const y = point[1];
+    let inside = false;
+
+    for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
+        const xi = path[i][0];
+        const yi = path[i][1];
+        const xj = path[j][0];
+        const yj = path[j][1];
+
+        const intersect = ((yi >= y) !== (yj >= y)) &&
+            (x <= ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+}
+
+
 function update(t, dt) {
+
     const time = t % 1;
-    //falling off 
-    //    const cubePosition = cube.getComponentOfType(Transform).translation;
-//    if (cubePosition[0] >= 3  ||
-//        cubePosition[0] <= -3 ||
-//        cubePosition[2] >= 3  ||
-//        cubePosition[2] <= -3   ) {
-//            console.log(cubePosition);
-//            vec3.lerp(cubePosition, startPosition, endPosition, EasingFunctions.bounceEaseOut(time));
-//        }
+    console.log(cubeController.getCoordinates());
+    let cubePosition = cube.getComponentOfType(Transform).translation;
+    if (cubeController.getCoordinates()[0] == FinishPoint[0] && cubeController.getCoordinates()[1] == FinishPoint[1] && cubeController.getFacing() == 0){
+        console.log("YOU WIN!");
+        //TODO: ending screen
+
+    }
+
+    //console.log(cubeController.getCoordinates()); 
+    if (!isInside(cubeController.getCoordinates(), floorPath)) {
+        cube.addComponent(new LinearAnimator(cube, {
+            startPosition: cubePosition,
+            endPosition: [cubePosition[0], -10, cubePosition[2]],
+            duration: time * 10,
+            loop: false,
+        }));
+
+        // Reset cube position NOT WORKING ?
+        cubeTransform.translation = [0,0.25,0];
+        //cubeController.backToStart(); ??
+        
+    }
+    
     scene.traverse(node => {
         for (const component of node.components) {
             component.update?.(time, dt);
