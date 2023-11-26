@@ -37,8 +37,8 @@ camera.addComponent(new TurntableController(camera, document.body, {
     yaw: 0.4,
 }));
 
-cube.addComponent(new CubeController(cube, document.body, {
-}));
+const cubeController = new CubeController(cube, document.body, {});
+cube.addComponent(cubeController);
 
 
 
@@ -85,34 +85,44 @@ const floorPath = [
     [8, 1],
     [0, 1],
     [0, -1]
-];
+]; 
 
-function isCubeOutsidePath(point, polygon) {
-    let isOutside = true;
+const FinishPoint = [27,2]
 
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const xi = polygon[i][0];
-        const yi = polygon[i][1];
-        const xj = polygon[j][0];
-        const yj = polygon[j][1];
+function isInside(point, path) {
+    const x = point[0];
+    const y = point[1];
+    let inside = false;
 
-        const intersect = ((yi > point[2]) !== (yj > point[2])) &&
-            (point[0] < (xj - xi) * (point[2] - yi) / (yj - yi) + xi);
+    for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
+        const xi = path[i][0];
+        const yi = path[i][1];
+        const xj = path[j][0];
+        const yj = path[j][1];
 
-        if (intersect) {
-            isOutside = !isOutside;
-        }
+        const intersect = ((yi >= y) !== (yj >= y)) &&
+            (x <= ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+
+        if (intersect) inside = !inside;
     }
 
-    return isOutside;
+    return inside;
 }
+
 
 function update(t, dt) {
 
     const time = t % 1;
-    //falling off 
+    console.log(cubeController.getCoordinates());
     let cubePosition = cube.getComponentOfType(Transform).translation;
-    if (isCubeOutsidePath(cubePosition, floorPath)) {
+    if (cubeController.getCoordinates()[0] == FinishPoint[0] && cubeController.getCoordinates()[1] == FinishPoint[1] && cubeController.getFacing() == 0){
+        console.log("YOU WIN!");
+        //TODO: ending screen
+
+    }
+
+    //console.log(cubeController.getCoordinates()); 
+    if (!isInside(cubeController.getCoordinates(), floorPath)) {
         cube.addComponent(new LinearAnimator(cube, {
             startPosition: cubePosition,
             endPosition: [cubePosition[0], -10, cubePosition[2]],
@@ -120,9 +130,12 @@ function update(t, dt) {
             loop: false,
         }));
 
-        // Reset cube position
-        cubeTransform.translation = [0, 0.25, 0];
+        // Reset cube position NOT WORKING ?
+        cubeTransform.translation = [0,0.25,0];
+        //cubeController.backToStart(); ??
+        
     }
+    
     scene.traverse(node => {
         for (const component of node.components) {
             component.update?.(time, dt);
