@@ -89,24 +89,62 @@ const floorPath = [
 
 const FinishPoint = [27,2]
 
-function isInside(point, path) {
+function isInside(point, path, facing) {
     const x = point[0];
     const y = point[1];
-    let inside = false;
-
-    for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
+  
+    if (facing == 0) {
+      let inside = false;
+      for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
         const xi = path[i][0];
         const yi = path[i][1];
         const xj = path[j][0];
         const yj = path[j][1];
-
-        const intersect = ((yi >= y) !== (yj >= y)) &&
-            (x <= ((xj - xi) * (y - yi)) / (yj - yi) + xi);
-
+  
+        const intersect =
+          (yi > y) !== (yj > y) &&
+          x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+  
         if (intersect) inside = !inside;
-    }
+      }
+  
+      return inside;
+    } else if (facing == 1) {
+        const x0 = point[0] + 1;
+        const y0 = point[1];
 
-    return inside;
+        const x1 = point[0] - 1;
+        const y1 = point[1];
+  
+      return (
+        isInside([x0, y0], path, 0) &&
+        isInside([x1, y1], path, 0)
+      );
+    } else if (facing == 2) {
+        const x0 = point[0];
+        const y0 = point[1] + 1;
+
+        const x1 = point[0];
+        const y1 = point[1] - 1;
+
+        return (
+            isInside([x0, y0], path, 0) &&
+            isInside([x1, y1], path, 0)
+          );
+    }
+  
+    return false;
+}
+
+function winGame() {
+    const overlay = document.createElement('div');
+    overlay.classList.add('winOverlay');
+    const message = document.createElement('div');
+    message.textContent = 'YOU WIN!';
+    
+    overlay.appendChild(message);
+
+    document.body.appendChild(overlay);
 }
 
 
@@ -117,12 +155,12 @@ function update(t, dt) {
     let cubePosition = cube.getComponentOfType(Transform).translation;
     if (cubeController.getCoordinates()[0] == FinishPoint[0] && cubeController.getCoordinates()[1] == FinishPoint[1] && cubeController.getFacing() == 0){
         console.log("YOU WIN!");
-        //TODO: ending screen
+        winGame();
 
     }
 
     //console.log(cubeController.getCoordinates()); 
-    if (!isInside(cubeController.getCoordinates(), floorPath)) {
+    if (!isInside(cubeController.getCoordinates(), floorPath, cubeController.getFacing())) {
         cube.addComponent(new LinearAnimator(cube, {
             startPosition: cubePosition,
             endPosition: [cubePosition[0], -10, cubePosition[2]],
