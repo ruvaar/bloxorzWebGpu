@@ -40,6 +40,22 @@ const vertexBufferLayout = {
     ],
 };
 
+const imgSrcs = [
+    './common/assets/img/cubemap/spacelf.png',
+    './common/assets/img/cubemap/spacert.png',
+    './common/assets/img/cubemap/spaceUP.png',
+    './common/assets/img/cubemap/spaceDN.png',
+    './common/assets/img/cubemap/spaceft.png',
+    './common/assets/img/cubemap/spacebk.png',
+]
+
+const promises = imgSrcs.map(async (src) => {
+    const response = await fetch(src);
+    return createImageBitmap(await response.blob());
+  });
+
+const imageBitmaps = await Promise.all(promises);
+
 export class Renderer extends BaseRenderer {
 
     constructor(canvas) {
@@ -73,6 +89,7 @@ export class Renderer extends BaseRenderer {
         });
 
         this.recreateDepthTexture();
+        this.prepareCubemap();
     }
 
     recreateDepthTexture() {
@@ -82,6 +99,14 @@ export class Renderer extends BaseRenderer {
             size: [this.canvas.width, this.canvas.height],
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
         });
+    }
+
+    prepareCubemap() {
+        // console.log(imageBitmaps)
+        this.cubemapTexture = WebGPU.createCubemapTextureFromSource(this.device, {
+            source: imageBitmaps,
+        });
+        // console.log(this.cubemapTexture)
     }
 
     prepareNode(node) {
@@ -224,6 +249,7 @@ export class Renderer extends BaseRenderer {
         this.device.queue.writeBuffer(lightUniformBuffer, 16, new Float32Array([lightComponent.shininess]));
         this.renderPass.setBindGroup(3, lightBindGroup);
 
+        // console.log(scene)
         this.renderNode(scene);
 
         this.renderPass.end();
@@ -240,7 +266,8 @@ export class Renderer extends BaseRenderer {
         this.device.queue.writeBuffer(modelUniformBuffer, 0, modelMatrix);
         this.device.queue.writeBuffer(modelUniformBuffer, 64, normalMatrix);
         this.renderPass.setBindGroup(1, modelBindGroup);
-
+        // console.log(modelMatrix)
+        // console.log(getModels(node))
         for (const model of getModels(node)) {
             this.renderModel(model);
         }
@@ -251,6 +278,8 @@ export class Renderer extends BaseRenderer {
     }
 
     renderModel(model) {
+        // console.log('Model primitives')
+        // console.log(model.primitives)
         for (const primitive of model.primitives) {
             this.renderPrimitive(primitive);
         }

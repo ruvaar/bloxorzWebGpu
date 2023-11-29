@@ -31,10 +31,42 @@ export function createTextureFromSource(device, {
             GPUTextureUsage.RENDER_ATTACHMENT,
     });
     device.queue.copyExternalImageToTexture(
-        { source, flipY },
+        { source, flipY }, // [V] Zakaj flipY?
         { texture },
         size,
     );
+    return texture;
+}
+
+export function createCubemapTextureFromSource(device, {
+    source, // Length of source is 6, since it's a cube
+    dimension = '2d',
+    format = 'rgba8unorm',
+    usage = 0,
+    mipLevelCount = 1,
+    flipY = false,
+}) {
+    const size = [source[0].width, source[0].height, 6]  // 6 ker 6 slik
+    const texture = device.createTexture({
+        dimension, 
+        size,
+        format,
+        mipLevelCount,
+        usage:
+            GPUTextureUsage.TEXTURE_BINDING |
+            GPUTextureUsage.COPY_DST |
+            GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    for (let i = 0; i < 6; i++) {
+        const sourceBitmap = source[i]
+        // console.log(sourceBitmap)
+        // console.log(sourceBitmap instanceof ImageBitmap)
+        device.queue.copyExternalImageToTexture(
+            { source: sourceBitmap, flipY },
+            { texture, origin: [0, 0, i] },
+            [sourceBitmap.width, sourceBitmap.height],
+            );
+        }
     return texture;
 }
 

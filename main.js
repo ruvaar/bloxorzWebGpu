@@ -30,6 +30,7 @@ await gltfLoader.load('common/scene/neki4.gltf')
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
+const cubeMap = null
 const cubeTransform = cube.getComponentOfType(Transform);
 
 camera.addComponent(new TurntableController(camera, document.body, {
@@ -162,7 +163,7 @@ let gameStartTime = Date.now();
 function update(t, dt) {
 
     const time = t % 1;
-    console.log(cubeController.getCoordinates());
+    // console.log(cubeController.getCoordinates());
     let cubePosition = cube.getComponentOfType(Transform).translation;
     if (cubeController.getCoordinates()[0] == FinishPoint[0] && cubeController.getCoordinates()[1] == FinishPoint[1] && cubeController.getFacing() == 0){
         console.log("YOU WIN!");

@@ -384,6 +384,7 @@ export class GLTFLoader {
         }
 
         const model = new Model({ primitives });
+        console.log(model)
 
         this.cache.set(gltfSpec, model);
         return model;
@@ -449,6 +450,7 @@ export class GLTFLoader {
         }
 
         if (gltfSpec.mesh !== undefined) {
+            console.log(gltfSpec.mesh)
             node.addComponent(this.loadMesh(gltfSpec.mesh));
         }
 
