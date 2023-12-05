@@ -152,12 +152,40 @@ function winGame() {
     gameWon = true;
   }
 }
-
 let gameStartTime = Date.now();
+
+let gameLose = false;
+function gameLost() {
+  if (!gameLose) {
+    console.log("GAME LOST");
+
+    const overlay = document.createElement("div");
+    overlay.classList.add("loseOverlay");
+    const message = document.createElement("div");
+    message.textContent = `YOU LOST! Press R to restart.`;
+
+    overlay.appendChild(message);
+    setTimeout(() => {
+      document.body.appendChild(overlay);
+    }, 500);
+    //add event listener for R key
+    gameLose = true;
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "KeyR") {
+        cubeController.backToStart();
+        console.log(cubeController.getCoordinates());
+        gameLose = false;
+
+        setTimeout(() => {
+          cubeController.backToStart();
+        }, 200);
+      }
+    });
+  }
+}
 
 function update(t, dt) {
   const time = t % 1;
-  //console.log(cubeController.getCoordinates());
   let cubePosition = cube.getComponentOfType(Transform).translation;
   if (
     cubeController.getCoordinates()[0] == FinishPoint[0] &&
@@ -168,7 +196,6 @@ function update(t, dt) {
     winGame();
   }
 
-  //console.log(cubeController.getCoordinates());
   if (
     !isInside(
       cubeController.getCoordinates(),
@@ -176,23 +203,22 @@ function update(t, dt) {
       cubeController.getFacing()
     )
   ) {
-    cube.addComponent(
-      new LinearAnimator(cube, {
-        startPosition: cubePosition,
-        endPosition: [cubePosition[0], -10, cubePosition[2]],
-        duration: time * 10,
-        loop: false,
-      })
-    );
-
-    // Reset cube position NOT WORKING ?
-    cubeTransform.translation = [0, 0.25, 0];
-    //cubeController.backToStart(); ??
+    let animator = new LinearAnimator(cube, {
+      startPosition: cubePosition,
+      endPosition: [cubePosition[0], -10, cubePosition[2]],
+      duration: 200,
+      loop: false,
+    });
+    cube.addComponent(animator);
+    setTimeout(() => {
+      animator.pause();
+    }, 200);
+    gameLost();
   }
 
   scene.traverse((node) => {
     for (const component of node.components) {
-      component.update?.(time, dt);
+      component.update?.(t, dt);
     }
   });
 }
