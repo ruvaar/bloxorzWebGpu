@@ -223,6 +223,8 @@ export class GLTFLoader {
             options.occlusionFactor = gltfSpec.occlusionTexture.strength;
         }
 
+        options.environmentTexture = {}
+
         const material = new Material(options);
 
         this.cache.set(gltfSpec, material);

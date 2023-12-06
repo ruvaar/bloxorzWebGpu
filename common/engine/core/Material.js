@@ -7,6 +7,7 @@ export class Material {
         occlusionTexture,
         roughnessTexture,
         metalnessTexture,
+        environmentTexture,
 
         baseFactor = [1, 1, 1, 1],
         emissionFactor = [0, 0, 0],
@@ -28,6 +29,8 @@ export class Material {
         this.occlusionFactor = occlusionFactor;
         this.roughnessFactor = roughnessFactor;
         this.metalnessFactor = metalnessFactor;
+
+        this.environmentTexture = environmentTexture;
     }
 
 }

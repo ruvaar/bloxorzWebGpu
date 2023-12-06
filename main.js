@@ -2,6 +2,7 @@ import {ResizeSystem} from './common/engine/systems/ResizeSystem.js';
 import { UpdateSystem} from './common/engine/systems/UpdateSystem.js';
 
 import { GLTFLoader } from './common/engine/loaders/GLTFLoader.js';
+import { ImageLoader} from './common/engine/loaders/ImageLoader.js'
 
 import { RotateAnimator } from './common/engine/animators/RotateAnimator.js';
 import { LinearAnimator } from './common/engine/animators/LinearAnimator.js';
@@ -11,6 +12,7 @@ import { CubeController } from './common/engine/controllers/CubeController.js';
 import { vec3 } from './lib/gl-matrix-module.js';
 
 import { Camera,
+         Material,
          Model,    
          Node,
          Transform,    
@@ -27,10 +29,21 @@ await renderer.initialize();
 const gltfLoader = new GLTFLoader();
 await gltfLoader.load('common/scene/neki4.gltf')
 
+const imageLoader = new ImageLoader();
+
+const environmentImages = await Promise.all([
+    './common/assets/img/cubemap/spacelf.png',
+    './common/assets/img/cubemap/spacert.png',
+    './common/assets/img/cubemap/spaceUP.png',
+    './common/assets/img/cubemap/spaceDN.png',
+    './common/assets/img/cubemap/spaceft.png',
+    './common/assets/img/cubemap/spacebk.png',
+].map(url => imageLoader.load(url)));
+
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
-const cubeMap = null
+// const cubeMap = null
 const cubeTransform = cube.getComponentOfType(Transform);
 
 camera.addComponent(new TurntableController(camera, document.body, {
@@ -155,10 +168,7 @@ function winGame() {
     }
 }
 
-
 let gameStartTime = Date.now(); 
-
-
 
 function update(t, dt) {
 
