@@ -15,6 +15,14 @@ import { Camera, Model, Node, Transform } from "./common/engine/core.js";
 import { Renderer } from "./Renderer.js";
 import { Light } from "./Light.js";
 
+var gameStartTime;
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    document.getElementById("start-overlay").style.display = "none";
+    gameStartTime = Date.now();
+  }
+});
+
 const canvas = document.querySelector("canvas");
 const renderer = new Renderer(canvas);
 await renderer.initialize();
@@ -152,13 +160,10 @@ function winGame() {
     gameWon = true;
   }
 }
-let gameStartTime = Date.now();
 
 let gameLose = false;
 function gameLost() {
   if (!gameLose) {
-    console.log("GAME LOST");
-
     const overlay = document.createElement("div");
     overlay.classList.add("loseOverlay");
     const message = document.createElement("div");
@@ -173,12 +178,12 @@ function gameLost() {
     document.addEventListener("keydown", (e) => {
       if (e.code === "KeyR") {
         cubeController.backToStart();
-        console.log(cubeController.getCoordinates());
         gameLose = false;
 
         setTimeout(() => {
           cubeController.backToStart();
         }, 200);
+        gameStartTime = Date.now();
       }
     });
   }
@@ -192,7 +197,6 @@ function update(t, dt) {
     cubeController.getCoordinates()[1] == FinishPoint[1] &&
     cubeController.getFacing() == 0
   ) {
-    console.log("YOU WIN!");
     winGame();
   }
 
@@ -206,7 +210,7 @@ function update(t, dt) {
     let animator = new LinearAnimator(cube, {
       startPosition: cubePosition,
       endPosition: [cubePosition[0], -10, cubePosition[2]],
-      duration: 200,
+      duration: 1000,
       loop: false,
     });
     cube.addComponent(animator);

@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Vaje 5</title>
-        <link rel="stylesheet" href="common/style.css">
-		<script type="module" src="main.js"></script>
-		<script src="lib/gl-matrix-min.js"></script>
-	</head>
-	<body>
-        <div class="fullscreen">
-            <canvas></canvas>
-        </div>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Block Roll</title>
+    <link rel="stylesheet" href="common/style.css" />
+    <script type="module" src="main.js"></script>
+    <script src="lib/gl-matrix-min.js"></script>
+  </head>
+  <body>
+    <div id="start-overlay">
+      <div class="overlay-content">
+        <img src="./common/scene/blockroll.jpg" id="gameTitle" />
+        <p>
+          Use WASD keys to move the block and get it to fall into the square
+          hole.
+        </p>
+        <h2>Press ENTER to start!</h2>
+      </div>
+    </div>
+    <div class="fullscreen">
+      <canvas></canvas>
+    </div>
+  </body>
 </html>
