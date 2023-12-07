@@ -20,6 +20,7 @@ export class CubeController {
       facing = 0,
       startTime = null,
       sum = 0,
+      animationComplete = true,
     } = {}
   ) {
     this.node = node;
@@ -44,6 +45,7 @@ export class CubeController {
     this.sum = sum;
     this.isKeyPressed = false;
     this.initHandlers();
+    this.animationComplete = animationComplete;
   }
   getFacing() {
     return this.facing;
@@ -87,10 +89,8 @@ export class CubeController {
 
   update(t, dt) {
     this.t = t;
-    const transform = this.node.getComponentOfType(Transform);
-    const hr = Math.PI / 2;
 
-    if (this.isKeyPressed) {
+    if (this.isKeyPressed && this.animationComplete) {
       if (this.facing == 0) {
         if (this.keys["KeyW"]) {
           this.pitchMovement -= 3;
@@ -198,6 +198,7 @@ export class CubeController {
   animateCubeFacing0(sign, leftright, updown) {
     if (!this.startTime) {
       this.startTime = Date.now();
+      this.animationComplete = false;
     }
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.startTime;
@@ -205,25 +206,26 @@ export class CubeController {
     const fraction = elapsedTime / animationDuration;
     const transform = this.node.getComponentOfType(Transform);
     if (fraction < 1) {
-      const xParameter = 1 - fraction;
+      const fractionInvert = 1 - fraction;
+
       transform.translation[0] =
         leftright == 1
-          ? this.rollMovement + sign * xParameter * 3
+          ? this.rollMovement + sign * fractionInvert * 3
           : transform.translation[0];
+
       transform.translation[1] =
         fraction > 0.2 ? 2.2 - fraction : transform.translation[1];
 
       transform.translation[2] =
         updown == 1
-          ? this.pitchMovement + sign * 3 * xParameter
+          ? this.pitchMovement + sign * 3 * fractionInvert
           : transform.translation[2];
-      transform.rotation = [
-        -sign * ((updown * Math.PI) / 3.15) * fraction,
-        0,
-        leftright * sign * fraction * (Math.PI / 3.15),
-        1,
-      ];
+
+      const xRot = [1, 0, 0, fraction * sign];
+      const zRot = [0, 0, 1, fraction * -sign];
+      transform.rotation = leftright == 1 ? zRot : xRot;
       quat.normalize(transform.rotation, transform.rotation);
+
       requestAnimationFrame(
         this.animateCubeFacing0.bind(this, sign, leftright, updown)
       );
@@ -231,20 +233,19 @@ export class CubeController {
       transform.translation[0] = this.rollMovement;
       transform.translation[1] = this.downToTheEarth;
       transform.translation[2] = this.pitchMovement;
-      transform.rotation = [
-        (-sign * (updown * Math.PI)) / 3.15,
-        0,
-        (leftright * (sign * Math.PI)) / 3.15,
-        1,
-      ];
+      const xRot = [1, 0, 0, sign];
+      const zRot = [0, 0, 1, -sign];
+      transform.rotation = leftright == 1 ? zRot : xRot;
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
+      this.animationComplete = true;
     }
   }
 
   animateCubeFacing1(sign, leftright, updown) {
     if (!this.startTime) {
       this.startTime = Date.now();
+      this.animationComplete = false;
     }
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.startTime;
@@ -256,14 +257,19 @@ export class CubeController {
         leftright == 1
           ? this.rollMovement + 3 * sign - sign * fraction * 3
           : transform.translation[0];
+
       transform.translation[1] = leftright == 1 ? 1.2 + fraction * 1 : 1.2;
 
-      const rotZ =
-        leftright == 1
-          ? Math.PI / 3.15 + sign * fraction * (Math.PI / 3.15)
-          : Math.PI / 3.15;
+      transform.translation[2] =
+        updown == 1
+          ? this.pitchMovement - sign * (1 - fraction) * 2
+          : transform.translation[2];
 
-      transform.rotation = [0, 0, rotZ, 1];
+      const zRot = [0, 0, 1, (1 - fraction) * sign];
+      const xRot = [1, 0, 0, (1 - fraction) * sign];
+      const zxRot = quat.create();
+      quat.multiply(zxRot, xRot, [0, 0, 1, 1]);
+      transform.rotation = leftright == 1 ? zRot : zxRot;
       quat.normalize(transform.rotation, transform.rotation);
       requestAnimationFrame(
         this.animateCubeFacing1.bind(this, sign, leftright, updown)
@@ -272,16 +278,22 @@ export class CubeController {
       transform.translation[0] = this.rollMovement;
       transform.translation[1] = this.downToTheEarth;
       transform.translation[2] = this.pitchMovement;
-      transform.rotation = [0, 0, (updown * Math.PI) / 3.15, 1];
 
+      const zRot = [0, 0, 0, 1];
+      const xRot = [1, 0, 0, 0];
+      const zxRot = quat.create();
+      quat.multiply(zxRot, xRot, [0, 0, 1, 1]);
+      transform.rotation = leftright == 1 ? zRot : zxRot;
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
+      this.animationComplete = true;
     }
   }
 
   animateCubeFacing2(sign, leftright, updown) {
     if (!this.startTime) {
       this.startTime = Date.now();
+      this.animationComplete = false;
     }
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.startTime;
@@ -301,9 +313,11 @@ export class CubeController {
           ? this.pitchMovement + sign * 3 * (1 - fraction)
           : transform.translation[2];
 
-      const xRot =
-        updown == 1 ? sign * (Math.PI / 3.15) * (1 - fraction) : Math.PI / 3.15;
-      transform.rotation = [xRot, 0, 0, 1];
+      const xRot = [1, 0, 0, -sign * (1 - fraction)];
+      const zRot = [0, 0, 1, sign * (1 - fraction)];
+      const xzRot = quat.create();
+      quat.multiply(xzRot, zRot, [1, 0, 0, 1]);
+      transform.rotation = updown == 1 ? xRot : xzRot;
       quat.normalize(transform.rotation, transform.rotation);
       requestAnimationFrame(
         this.animateCubeFacing2.bind(this, sign, leftright, updown)
@@ -312,15 +326,16 @@ export class CubeController {
       transform.translation[0] = this.rollMovement;
       transform.translation[1] = this.downToTheEarth;
       transform.translation[2] = this.pitchMovement;
-      transform.rotation = [
-        (leftright * Math.PI) / 3.15,
-        leftright * (Math.PI / 120),
-        0,
-        1,
-      ];
+
+      const xRot = [1, 0, 0, 1];
+      const zRot = [0, 0, 1, 1];
+      const xzRot = quat.create();
+      quat.multiply(xzRot, zRot, xRot);
+      transform.rotation = updown == 1 ? [0, 0, 0, 1] : xzRot;
 
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
+      this.animationComplete = true;
     }
   }
 }
