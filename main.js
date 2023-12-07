@@ -27,7 +27,7 @@ const renderer =  new Renderer(canvas);
 await renderer.initialize();
 
 const gltfLoader = new GLTFLoader();
-await gltfLoader.load('common/scene/neki4.gltf')
+await gltfLoader.load('common/scene/neki_t.gltf')
 
 const imageLoader = new ImageLoader();
 
@@ -43,6 +43,7 @@ const environmentImages = await Promise.all([
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find(node => node.getComponentOfType(Camera));
 const cube = gltfLoader.loadNode('Cube');
+const skybox = gltfLoader.loadNode('Skybox');
 // const cubeMap = null
 const cubeTransform = cube.getComponentOfType(Transform);
 
@@ -65,6 +66,8 @@ light.addComponent(new Light({
 }));
 
 scene.addChild(light)
+
+skybox.addComponent(new Transform())
 
 const floorPath = [
     [0, -1],
@@ -175,6 +178,9 @@ function update(t, dt) {
     const time = t % 1;
     // console.log(cubeController.getCoordinates());
     let cubePosition = cube.getComponentOfType(Transform).translation;
+    let cameraPosition = camera.getComponentOfType(Transform).translation;
+    let skyboxTransform = skybox.getComponentOfType(Transform);
+    skyboxTransform.translation = cameraPosition
     if (cubeController.getCoordinates()[0] == FinishPoint[0] && cubeController.getCoordinates()[1] == FinishPoint[1] && cubeController.getFacing() == 0){
         console.log("YOU WIN!");
         winGame();

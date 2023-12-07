@@ -27,4 +27,12 @@ export class Transform {
         mat4.getScaling(this.scale, matrix);
     }
 
+    get translation() {
+        return this._translation;
+    }
+
+    set translation(translation) {
+        this._translation = translation;
+    }
+
 }

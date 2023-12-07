@@ -184,47 +184,47 @@ export class Renderer extends BaseRenderer {
 
         const baseTexture = this.prepareImage(material.baseTexture.image).gpuTexture;
         const baseSampler = this.prepareSampler(material.baseTexture.sampler).gpuSampler;
-        let uEnvironmentTexture = {};
-        let uEnvironmentSampler = {};
-        if (material?.environmentTexture) {
-            
-            const pixelData = new Uint8Array([255, 255, 255, 255]); // RGBA values for a white pixel
-            const imageDataSettings = { width: 1, height: 1 };
-            
-            let whiteImageBitmap;
-            createImageBitmap({ data: pixelData, ...imageDataSettings }).then(
-                result => {
-                    whiteImageBitmap = result;
-                }
-            );
-            console.log(whiteImageBitmap instanceof ImageBitmap)
-
-            uEnvironmentTexture = this.device.createTexture({
-                size: [1, 1, 6],
-                format: 'rgba8unorm',
-                usage:
-                GPUTextureUsage.TEXTURE_BINDING |
-                GPUTextureUsage.COPY_DST |
-                GPUTextureUsage.RENDER_ATTACHMENT,
-            });
-            
-            for (let i = 0; i < 6; i++) {
-                this.device.queue.copyExternalImageToTexture(
-                    { source:  whiteImageBitmap },
-                    { texture: uEnvironmentTexture, origin: [0, 0, i] },
-                    [1, 1],
-                );
-            }
-            
-            uEnvironmentSampler = this.device.createSampler({
-                minFilter: 'linear',
-                magFilter: 'linear',
-            });
-        }
-
-        else {
-            [uEnvironmentTexture, uEnvironmentSampler] = this.setEnvironment(material.environmentTexture);
-        }
+        //let uEnvironmentTexture = {};
+        //let uEnvironmentSampler = {};
+        //if (material?.environmentTexture) {
+        //    
+        //    const pixelData = new Uint8Array([255, 255, 255, 255]); // RGBA values for a white pixel
+        //    const imageDataSettings = { width: 1, height: 1 };
+        //    
+        //    let whiteImageBitmap;
+        //    createImageBitmap({ data: pixelData, ...imageDataSettings }).then(
+        //        result => {
+        //            whiteImageBitmap = result;
+        //        }
+        //    );
+        //    console.log(whiteImageBitmap instanceof ImageBitmap)
+//
+        //    uEnvironmentTexture = this.device.createTexture({
+        //        size: [1, 1, 6],
+        //        format: 'rgba8unorm',
+        //        usage:
+        //        GPUTextureUsage.TEXTURE_BINDING |
+        //        GPUTextureUsage.COPY_DST |
+        //        GPUTextureUsage.RENDER_ATTACHMENT,
+        //    });
+        //    
+        //    for (let i = 0; i < 6; i++) {
+        //        this.device.queue.copyExternalImageToTexture(
+        //            { source:  whiteImageBitmap },
+        //            { texture: uEnvironmentTexture, origin: [0, 0, i] },
+        //            [1, 1],
+        //        );
+        //    }
+        //    
+        //    uEnvironmentSampler = this.device.createSampler({
+        //        minFilter: 'linear',
+        //        magFilter: 'linear',
+        //    });
+        //}
+//
+        //else {
+        //    [uEnvironmentTexture, uEnvironmentSampler] = this.setEnvironment(material.environmentTexture);
+        //}
 
         const materialUniformBuffer = this.device.createBuffer({
             size: 16,
@@ -237,8 +237,8 @@ export class Renderer extends BaseRenderer {
                 { binding: 0, resource: { buffer: materialUniformBuffer } },
                 { binding: 1, resource: baseTexture.createView() },
                 { binding: 2, resource: baseSampler },
-                { binding: 3, resource: uEnvironmentTexture },
-                { binding: 4, resource: uEnvironmentSampler },
+        //        { binding: 3, resource: uEnvironmentTexture },
+        //        { binding: 4, resource: uEnvironmentSampler },
             ],
         });
 
