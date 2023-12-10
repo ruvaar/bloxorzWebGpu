@@ -24,7 +24,7 @@ export class TurntableController {
     this.moveSensitivity = moveSensitivity;
     this.zoomSensitivity = zoomSensitivity;
 
-    this.initHandlers();
+    //this.initHandlers();
   }
 
   initHandlers() {

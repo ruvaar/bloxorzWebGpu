@@ -30,7 +30,7 @@ const renderer = new Renderer(canvas);
 await renderer.initialize();
 
 const gltfLoader = new GLTFLoader();
-await gltfLoader.load("common/scene/neki5.gltf");
+await gltfLoader.load("common/scene/neki_adv.gltf");
 
 const scene = gltfLoader.loadScene(gltfLoader.defaultScene);
 const camera = scene.find((node) => node.getComponentOfType(Camera));
@@ -52,7 +52,7 @@ const light = new Node();
 light.addComponent(new Transform());
 light.addComponent(
   new Light({
-    ambient: 0.8,
+    ambient: 1,
   })
 );
 
