@@ -8,6 +8,30 @@
     <script src="lib/gl-matrix-min.js"></script>
   </head>
   <body>
+    <audio id="backgroundMusic" autoplay loop>
+      <source
+        src="./common/engine/audio/appulse-165912.mp3"
+        type="audio/mpeg"
+        preload="auto"
+      />
+      Your browser does not support the audio element.
+    </audio>
+    <audio
+      id="blockFall"
+      src="./common/engine/audio/fallOver.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="lostGameSound"
+      src="./common/engine/audio/lose.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="winGameSound"
+      src="./common/engine/audio/success.mp3"
+      preload="auto"
+    ></audio>
+
     <div id="start-overlay">
       <div class="overlay-content">
         <img src="./common/scene/blockroll.jpg" id="gameTitle" />

@@ -23,6 +23,9 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
+var audio = document.getElementById("backgroundMusic");
+audio.volume = 0.1; // 20% volume
+
 const canvas = document.querySelector("canvas");
 const renderer = new Renderer(canvas);
 await renderer.initialize();
@@ -151,13 +154,25 @@ function winGame() {
     const overlay = document.createElement("div");
     overlay.classList.add("winOverlay");
     const message = document.createElement("div");
-    message.textContent = `YOU WIN! Time: ${elapsedTime} seconds`;
+    message.textContent = `YOU WIN! Time: ${elapsedTime} seconds. Press R to restart.`;
 
     overlay.appendChild(message);
-
+    var sound = document.getElementById("winGameSound");
+    sound.play();
     document.body.appendChild(overlay);
-
     gameWon = true;
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "KeyR") {
+        cubeController.backToStart();
+        gameWon = false;
+
+        setTimeout(() => {
+          cubeController.backToStart();
+        }, 200);
+        gameStartTime = Date.now();
+        overlay.remove();
+      }
+    });
   }
 }
 
@@ -168,7 +183,8 @@ function gameLost() {
     overlay.classList.add("loseOverlay");
     const message = document.createElement("div");
     message.textContent = `YOU LOST! Press R to restart.`;
-
+    var sound = document.getElementById("lostGameSound");
+    sound.play();
     overlay.appendChild(message);
     setTimeout(() => {
       document.body.appendChild(overlay);

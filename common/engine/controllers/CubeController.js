@@ -239,6 +239,7 @@ export class CubeController {
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
       this.animationComplete = true;
+      this.playSoundEffect();
     }
   }
 
@@ -287,6 +288,7 @@ export class CubeController {
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
       this.animationComplete = true;
+      this.playSoundEffect();
     }
   }
 
@@ -336,6 +338,11 @@ export class CubeController {
       quat.normalize(transform.rotation, transform.rotation);
       this.startTime = null;
       this.animationComplete = true;
+      this.playSoundEffect();
     }
+  }
+  playSoundEffect() {
+    var sound = document.getElementById("blockFall");
+    sound.play();
   }
 }
