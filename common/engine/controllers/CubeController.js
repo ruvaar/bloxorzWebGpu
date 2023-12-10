@@ -5,9 +5,6 @@ export class CubeController {
   constructor(
     node,
     domElement,
-    times,
-    rotations,
-    translations,
     {
       pitch = 0,
       yaw = 0,
@@ -25,10 +22,6 @@ export class CubeController {
   ) {
     this.node = node;
     this.domElement = domElement;
-
-    this.times = times;
-    this.rotations = rotations;
-    this.translations = translations;
 
     this.keys = {};
 

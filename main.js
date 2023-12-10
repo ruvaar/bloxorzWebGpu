@@ -3,7 +3,6 @@ import { UpdateSystem } from "./common/engine/systems/UpdateSystem.js";
 
 import { GLTFLoader } from "./common/engine/loaders/GLTFLoader.js";
 
-import { RotateAnimator } from "./common/engine/animators/RotateAnimator.js";
 import { LinearAnimator } from "./common/engine/animators/LinearAnimator.js";
 
 import { TurntableController } from "./common/engine/controllers/TurntableController.js";
@@ -42,21 +41,11 @@ camera.addComponent(
   new TurntableController(camera, document.body, {
     distance: 90,
     pitch: -0.4,
-    yaw: 0.5,
+    yaw: 0.3,
   })
 );
-const times = gltfLoader.loadAccessor(176);
-const rotations = gltfLoader.loadAccessor(177);
-const translations = gltfLoader.loadAccessor(178);
 
-const cubeController = new CubeController(
-  cube,
-  document.body,
-  times,
-  rotations,
-  translations,
-  {}
-);
+const cubeController = new CubeController(cube, document.body, {});
 cube.addComponent(cubeController);
 
 const light = new Node();
